@@ -2,6 +2,8 @@
 #include "stm32f10x_usart.h"
 #include "stm32f10x_exti.h"
 #include "misc.h"
+#include "bsp_led.h"
+
 #include <stdio.h>	 
 #include  <stdarg.h>
 
@@ -128,7 +130,6 @@ void RCC_Configuration(void)
 {
    SystemInit(); 
    RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO  , ENABLE);  
- 
 }
 
 
@@ -147,27 +148,10 @@ void GPIO_Configuration(void)
   RCC_APB2PeriphClockCmd( RCC_APB2Periph_USART1 |RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
                          RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD |
                          RCC_APB2Periph_GPIOE, ENABLE);
-  	
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;				     //LED1控制
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);					 
 
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_3;		 //LED2, LED3控制
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;					 //SST25VF016B SPI片选
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_7;		 //PB12---VS1003 SPI片选（V2.1) 
-  GPIO_Init(GPIOB, &GPIO_InitStructure);					 //PB7---触摸屏芯片XPT2046 SPI 片选
-  
-  /* 禁止SPI1总线上的其他设备 */
-  GPIO_SetBits(GPIOB, GPIO_Pin_7);						     //触摸屏芯片XPT2046 SPI 片选禁止  
-  GPIO_SetBits(GPIOB, GPIO_Pin_12);						     //VS1003 SPI片选（V2.1)禁止 
-  GPIO_SetBits(GPIOC, GPIO_Pin_4);						     //SST25VF016B SPI片选禁止  
-
-
+    // add by grant. LED GPIO init
+    LED_GPIO_Config();
+    
   //modified by grant. change the INT pin from PA1 to PC6.
   #if 1
   
@@ -186,6 +170,10 @@ void GPIO_Configuration(void)
 //  GPIO_SetBits(GPIOE, GPIO_Pin_1 );		 	 	             
 //  Delay(0xAFFF);	
 }
+
+
+
+
 
 
 /****************************************************************************

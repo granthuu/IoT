@@ -28,6 +28,9 @@ extern unsigned short uip_len;
 #include "stm32f10x_it.h"
 #include "stm32f10x_exti.h"
 #include "enc28j60.h"
+#include "bsp_led.h"
+
+
 extern unsigned char ETH_INT;
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -131,10 +134,19 @@ void PendSV_Handler(void)
 extern void SysTick_ISR(void);
 
 extern unsigned int system_tick_num;
+
 //系统时钟每20ms中断一次，system_tick_num记录系统的tick数
 void SysTick_Handler(void)	
 {
+    static int cnt = 0;
+    
 	system_tick_num += 20;
+    
+    if(cnt++ >= (1000/20))
+    {
+        cnt = 0;
+        LED2_TOGGLE();
+    }
 }
 
 
